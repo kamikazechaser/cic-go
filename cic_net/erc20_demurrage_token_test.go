@@ -2,7 +2,9 @@ package cic_net
 
 import (
 	"context"
+	"crypto/ecdsa"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/lmittmann/w3"
 	"math/big"
 	"testing"
@@ -127,6 +129,122 @@ func TestCicNet_DemurrageToken_BaseBalanceOf(t *testing.T) {
 				if got.Cmp(&tt.balanceGte) < 0 {
 					t.Fatalf("Token = %v, want %d", got, tt.balanceGte.Int64())
 				}
+			}
+		})
+	}
+}
+
+func TestCicNet_DemurrageToken_ChangePeriod(t *testing.T) {
+	type args struct {
+		writeTx WriteTx
+	}
+
+	// Bootstrap signer
+	privateKey, err := crypto.HexToECDSA(conf.privateKey)
+	if err != nil {
+		t.Fatalf("ECDSA error = %v", err)
+	}
+	publicKey := privateKey.Public()
+	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
+	if !ok {
+		t.Fatalf("ECDSA error = %v", err)
+	}
+	fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
+
+	tests := []struct {
+		name       string
+		args       args
+		wantErr    bool
+		balanceGte big.Int
+	}{
+		{
+			name: "ChangePeriod for Sarafu",
+			args: args{
+				writeTx: WriteTx{
+					from:       fromAddress,
+					to:         w3.A("0xaB89822F31c2092861F713F6F34bd6877a8C1878"),
+					gasLimit:   12000000,
+					privateKey: *privateKey,
+				},
+			},
+			wantErr: false,
+		},
+	}
+
+	for _, testcase := range tests {
+		tt := testcase
+
+		t.Run(tt.name, func(t *testing.T) {
+			cicnet, err := NewCicNet(conf.rpcProvider, w3.A(conf.tokenIndex))
+
+			if err != nil {
+				t.Fatalf("NewCicNet error = %v", err)
+			}
+
+			tx, err := cicnet.ChangePeriod(context.Background(), tt.args.writeTx)
+			t.Logf("ChangePeriod tx_hash %s", tx.String())
+
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ChangePeriod() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestCicNet_DemurrageToken_ApplyDemurrageLimited(t *testing.T) {
+	type args struct {
+		rounds  int64
+		writeTx WriteTx
+	}
+
+	// Bootstrap signer
+	privateKey, err := crypto.HexToECDSA(conf.privateKey)
+	if err != nil {
+		t.Fatalf("ECDSA error = %v", err)
+	}
+	publicKey := privateKey.Public()
+	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
+	if !ok {
+		t.Fatalf("ECDSA error = %v", err)
+	}
+	fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
+
+	tests := []struct {
+		name       string
+		args       args
+		wantErr    bool
+		balanceGte big.Int
+	}{
+		{
+			name: "ChangePeriod for Sarafu",
+			args: args{
+				rounds: 1000,
+				writeTx: WriteTx{
+					from:       fromAddress,
+					to:         w3.A("0xaB89822F31c2092861F713F6F34bd6877a8C1878"),
+					gasLimit:   12000000,
+					privateKey: *privateKey,
+				},
+			},
+			wantErr: false,
+		},
+	}
+
+	for _, testcase := range tests {
+		tt := testcase
+
+		t.Run(tt.name, func(t *testing.T) {
+			cicnet, err := NewCicNet(conf.rpcProvider, w3.A(conf.tokenIndex))
+
+			if err != nil {
+				t.Fatalf("NewCicNet error = %v", err)
+			}
+
+			tx, err := cicnet.ApplyDemurrageLimited(context.Background(), tt.args.rounds, tt.args.writeTx)
+			t.Logf("ApplyDemurrageLimited tx_hash %s", tx.String())
+
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ApplyDemurrageLimited() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}

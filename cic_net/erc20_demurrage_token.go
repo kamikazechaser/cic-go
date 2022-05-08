@@ -77,3 +77,33 @@ func (c *CicNet) BaseBalanceOf(ctx context.Context, tokenAddress common.Address,
 
 	return balance, nil
 }
+
+func (c *CicNet) ChangePeriod(ctx context.Context, txData WriteTx) (common.Hash, error) {
+	sig := w3.MustNewFunc("changePeriod()", "bool")
+	input, err := sig.EncodeArgs()
+	if err != nil {
+		return [32]byte{}, err
+	}
+
+	txHash, err := c.signAndCall(ctx, input, txData)
+	if err != nil {
+		return [32]byte{}, err
+	}
+
+	return txHash, nil
+}
+
+func (c *CicNet) ApplyDemurrageLimited(ctx context.Context, rounds int64, txData WriteTx) (common.Hash, error) {
+	sig := w3.MustNewFunc("applyDemurrageLimited(uint256 _rounds)", "bool")
+	input, err := sig.EncodeArgs(big.NewInt(rounds))
+	if err != nil {
+		return [32]byte{}, err
+	}
+
+	txHash, err := c.signAndCall(ctx, input, txData)
+	if err != nil {
+		return [32]byte{}, err
+	}
+
+	return txHash, nil
+}
