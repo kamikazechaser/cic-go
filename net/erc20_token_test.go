@@ -1,4 +1,4 @@
-package cic_net
+package net
 
 import (
 	"context"
@@ -37,16 +37,16 @@ func TestCicNet_ERC20Token_ERC20TokenInfo(t *testing.T) {
 		},
 	}
 
+	cicnet, err := NewCicNet(conf.rpcProvider, w3.A(conf.tokenIndex))
+
+	if err != nil {
+		t.Fatalf("NewCicNet error = %v", err)
+	}
+
 	for _, testcase := range tests {
 		tt := testcase
 
 		t.Run(tt.name, func(t *testing.T) {
-			cicnet, err := NewCicNet(conf.rpcProvider, w3.A(conf.tokenIndex))
-
-			if err != nil {
-				t.Fatalf("NewCicNet error = %v", err)
-			}
-
 			got, err := cicnet.ERC20TokenInfo(context.Background(), tt.args.contractAddress)
 
 			if (err != nil) != tt.wantErr {
@@ -54,7 +54,7 @@ func TestCicNet_ERC20Token_ERC20TokenInfo(t *testing.T) {
 			}
 
 			if got.Symbol != tt.symbol {
-				t.Fatalf("Token = %v, want %v", got, tt.symbol)
+				t.Errorf("Token = %v, want %v", got, tt.symbol)
 			}
 		})
 	}
@@ -92,16 +92,16 @@ func TestCicNet_ERC20Token_BalanceOf(t *testing.T) {
 		},
 	}
 
+	cicnet, err := NewCicNet(conf.rpcProvider, w3.A(conf.tokenIndex))
+
+	if err != nil {
+		t.Fatalf("NewCicNet error = %v", err)
+	}
+
 	for _, testcase := range tests {
 		tt := testcase
 
 		t.Run(tt.name, func(t *testing.T) {
-			cicnet, err := NewCicNet(conf.rpcProvider, w3.A(conf.tokenIndex))
-
-			if err != nil {
-				t.Fatalf("NewCicNet error = %v", err)
-			}
-
 			got, err := cicnet.BalanceOf(context.Background(), tt.args.contractAddress, tt.args.accountAddress)
 
 			if (err != nil) != tt.wantErr {
@@ -109,7 +109,7 @@ func TestCicNet_ERC20Token_BalanceOf(t *testing.T) {
 			}
 
 			if got.Cmp(&tt.balanceGte) < 0 {
-				t.Fatalf("Token = %v, want %d", got, tt.balanceGte.Int64())
+				t.Errorf("Token = %v, want %d", got, tt.balanceGte.Int64())
 			}
 		})
 	}

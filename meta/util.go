@@ -1,4 +1,4 @@
-package cic_meta
+package meta
 
 import (
 	"crypto/sha256"

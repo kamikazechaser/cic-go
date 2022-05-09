@@ -1,4 +1,4 @@
-package cic_net
+package net
 
 import (
 	"github.com/lmittmann/w3"
@@ -22,9 +22,9 @@ func TestCicNet_Connect(t *testing.T) {
 	name := "Test RPC connection"
 	wantErr := false
 
-	t.Run(name, func(t *testing.T) {
-		cicnet, _ := NewCicNet(conf.rpcProvider, w3.A(conf.tokenIndex))
+	cicnet, _ := NewCicNet(conf.rpcProvider, w3.A(conf.tokenIndex))
 
+	t.Run(name, func(t *testing.T) {
 		if err := cicnet.Close(); (err != nil) != wantErr {
 			t.Errorf("EntryCount() error = %v, wantErr %v", err, wantErr)
 		}

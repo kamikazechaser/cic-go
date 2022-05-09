@@ -1,4 +1,4 @@
-package cic_net
+package net
 
 import (
 	"crypto/ecdsa"
@@ -22,6 +22,7 @@ type WriteTx struct {
 	from       common.Address
 	to         common.Address
 	gasLimit   uint64
+	nonce      uint64
 	privateKey ecdsa.PrivateKey
 }
 
