@@ -1,4 +1,4 @@
-package cic_net
+package net
 
 import (
 	"context"

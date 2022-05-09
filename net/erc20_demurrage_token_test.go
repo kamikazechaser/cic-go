@@ -1,4 +1,4 @@
-package cic_net
+package net
 
 import (
 	"context"
@@ -44,16 +44,16 @@ func TestCicNet_DemurrageToken_DemurrageTokeInfo(t *testing.T) {
 		},
 	}
 
+	cicnet, err := NewCicNet(conf.rpcProvider, w3.A(conf.tokenIndex))
+
+	if err != nil {
+		t.Fatalf("NewCicNet error = %v", err)
+	}
+
 	for _, testcase := range tests {
 		tt := testcase
 
 		t.Run(tt.name, func(t *testing.T) {
-			cicnet, err := NewCicNet(conf.rpcProvider, w3.A(conf.tokenIndex))
-
-			if err != nil {
-				t.Fatalf("NewCicNet error = %v", err)
-			}
-
 			got, err := cicnet.DemurrageTokenInfo(context.Background(), tt.args.contractAddress)
 
 			if (err != nil) != tt.wantErr {
@@ -62,7 +62,7 @@ func TestCicNet_DemurrageToken_DemurrageTokeInfo(t *testing.T) {
 
 			if !tt.wantErr {
 				if got.DemurrageAmount.Cmp(big.NewInt(0)) < 1 {
-					t.Fatalf("DemurrageAmount = %v, want %d atleast", got, 1)
+					t.Errorf("DemurrageAmount = %v, want %d atleast", got, 1)
 				}
 			}
 		})
@@ -109,16 +109,16 @@ func TestCicNet_DemurrageToken_BaseBalanceOf(t *testing.T) {
 		},
 	}
 
+	cicnet, err := NewCicNet(conf.rpcProvider, w3.A(conf.tokenIndex))
+
+	if err != nil {
+		t.Fatalf("NewCicNet error = %v", err)
+	}
+
 	for _, testcase := range tests {
 		tt := testcase
 
 		t.Run(tt.name, func(t *testing.T) {
-			cicnet, err := NewCicNet(conf.rpcProvider, w3.A(conf.tokenIndex))
-
-			if err != nil {
-				t.Fatalf("NewCicNet error = %v", err)
-			}
-
 			got, err := cicnet.BaseBalanceOf(context.Background(), tt.args.contractAddress, tt.args.accountAddress)
 
 			if (err != nil) != tt.wantErr {
@@ -127,7 +127,7 @@ func TestCicNet_DemurrageToken_BaseBalanceOf(t *testing.T) {
 
 			if !tt.wantErr {
 				if got.Cmp(&tt.balanceGte) < 0 {
-					t.Fatalf("Token = %v, want %d", got, tt.balanceGte.Int64())
+					t.Errorf("Token = %v, want %d", got, tt.balanceGte.Int64())
 				}
 			}
 		})
@@ -151,6 +151,16 @@ func TestCicNet_DemurrageToken_ChangePeriod(t *testing.T) {
 	}
 	fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
 
+	cicnet, err := NewCicNet(conf.rpcProvider, w3.A(conf.tokenIndex))
+	if err != nil {
+		t.Fatalf("NewCicNet error = %v", err)
+	}
+
+	nonce, err := cicnet.LastNonce(context.Background(), fromAddress)
+	if err != nil {
+		t.Fatalf("Cicnet client error")
+	}
+
 	tests := []struct {
 		name       string
 		args       args
@@ -163,6 +173,7 @@ func TestCicNet_DemurrageToken_ChangePeriod(t *testing.T) {
 				writeTx: WriteTx{
 					from:       fromAddress,
 					to:         w3.A("0xaB89822F31c2092861F713F6F34bd6877a8C1878"),
+					nonce:      nonce + 1,
 					gasLimit:   12000000,
 					privateKey: *privateKey,
 				},
@@ -175,11 +186,6 @@ func TestCicNet_DemurrageToken_ChangePeriod(t *testing.T) {
 		tt := testcase
 
 		t.Run(tt.name, func(t *testing.T) {
-			cicnet, err := NewCicNet(conf.rpcProvider, w3.A(conf.tokenIndex))
-
-			if err != nil {
-				t.Fatalf("NewCicNet error = %v", err)
-			}
 
 			tx, err := cicnet.ChangePeriod(context.Background(), tt.args.writeTx)
 			t.Logf("ChangePeriod tx_hash %s", tx.String())
@@ -209,6 +215,16 @@ func TestCicNet_DemurrageToken_ApplyDemurrageLimited(t *testing.T) {
 	}
 	fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
 
+	cicnet, err := NewCicNet(conf.rpcProvider, w3.A(conf.tokenIndex))
+	if err != nil {
+		t.Fatalf("NewCicNet error = %v", err)
+	}
+
+	nonce, err := cicnet.LastNonce(context.Background(), fromAddress)
+	if err != nil {
+		t.Fatalf("Cicnet client error")
+	}
+
 	tests := []struct {
 		name       string
 		args       args
@@ -222,6 +238,7 @@ func TestCicNet_DemurrageToken_ApplyDemurrageLimited(t *testing.T) {
 				writeTx: WriteTx{
 					from:       fromAddress,
 					to:         w3.A("0xaB89822F31c2092861F713F6F34bd6877a8C1878"),
+					nonce:      nonce + 1,
 					gasLimit:   12000000,
 					privateKey: *privateKey,
 				},
@@ -234,12 +251,6 @@ func TestCicNet_DemurrageToken_ApplyDemurrageLimited(t *testing.T) {
 		tt := testcase
 
 		t.Run(tt.name, func(t *testing.T) {
-			cicnet, err := NewCicNet(conf.rpcProvider, w3.A(conf.tokenIndex))
-
-			if err != nil {
-				t.Fatalf("NewCicNet error = %v", err)
-			}
-
 			tx, err := cicnet.ApplyDemurrageLimited(context.Background(), tt.args.rounds, tt.args.writeTx)
 			t.Logf("ApplyDemurrageLimited tx_hash %s", tx.String())
 

@@ -1,4 +1,4 @@
-module github.com/grassrootseconomics/cic_go
+module github.com/grassrootseconomics/cic-go
 
 go 1.18
 
