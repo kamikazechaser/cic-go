@@ -18,6 +18,7 @@ jobs:
           TOKEN_INDEX: ${{ secrets.TOKEN_INDEX }}
           RPC_PROVIDER: ${{ secrets.RPC_PROVIDER }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          BATCH_CONTRACT: ${{ secrets.BATCH_CONTRACT }}
         run: go test -v -covermode atomic -coverprofile=covprofile ./...
       - name: install goveralls
         run: go install github.com/mattn/goveralls@latest
