@@ -9,6 +9,7 @@ Go modules to access various parts of the cic stack
 
 - meta (web2 metadata store)
 - net (cic smart contracts)
+- batch balance query (`0xb9e215B789e9Ec6643Ba4ff7b98EA219F38c6fE5`)
 
 ## Installation
 

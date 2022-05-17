@@ -1,9 +1,10 @@
 package net
 
 import (
-	"github.com/lmittmann/w3"
 	"os"
 	"testing"
+
+	"github.com/lmittmann/w3"
 )
 
 type tConfig struct {
@@ -26,7 +27,7 @@ func TestCicNet_Connect(t *testing.T) {
 
 	t.Run(name, func(t *testing.T) {
 		if err := cicnet.Close(); (err != nil) != wantErr {
-			t.Errorf("EntryCount() error = %v, wantErr %v", err, wantErr)
+			t.Errorf("Error() error = %v, wantErr %v", err, wantErr)
 		}
 	})
 }
