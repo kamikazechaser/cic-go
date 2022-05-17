@@ -14,7 +14,7 @@ type tConfig struct {
 
 var conf = &tConfig{
 	rpcProvider:   os.Getenv("RPC_PROVIDER"),
-	batchContract: os.Getenv("BATCH_BALANCE"),
+	batchContract: os.Getenv("BATCH_CONTRACT"),
 }
 
 func TestBatchBalance_Connect(t *testing.T) {
