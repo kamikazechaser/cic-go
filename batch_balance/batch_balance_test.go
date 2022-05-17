@@ -17,7 +17,7 @@ var conf = &tConfig{
 	batchContract: os.Getenv("BATCH_BALANCE"),
 }
 
-func TestCicNet_Connect(t *testing.T) {
+func TestBatchBalance_Connect(t *testing.T) {
 	name := "Test RPC connection"
 	wantErr := false
 
