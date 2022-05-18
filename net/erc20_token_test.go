@@ -43,7 +43,7 @@ func TestCicNet_ERC20Token_ERC20TokenInfo(t *testing.T) {
 	if err != nil {
 		t.Errorf("Creating an rpc instance failed = %v", err)
 	}
-	cicnet, err := NewCicNet(*newProvider, w3.A(conf.tokenIndex))
+	cicnet, err := NewCicNet(newProvider, w3.A(conf.tokenIndex))
 
 	if err != nil {
 		t.Fatalf("NewCicNet error = %v", err)
@@ -102,7 +102,7 @@ func TestCicNet_ERC20Token_BalanceOf(t *testing.T) {
 	if err != nil {
 		t.Errorf("Creating an rpc instance failed = %v", err)
 	}
-	cicnet, err := NewCicNet(*newProvider, w3.A(conf.tokenIndex))
+	cicnet, err := NewCicNet(newProvider, w3.A(conf.tokenIndex))
 
 	for _, testcase := range tests {
 		tt := testcase

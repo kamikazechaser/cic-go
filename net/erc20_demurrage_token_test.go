@@ -50,7 +50,7 @@ func TestCicNet_DemurrageToken_DemurrageTokeInfo(t *testing.T) {
 	if err != nil {
 		t.Errorf("Creating an rpc instance failed = %v", err)
 	}
-	cicnet, err := NewCicNet(*newProvider, w3.A(conf.tokenIndex))
+	cicnet, err := NewCicNet(newProvider, w3.A(conf.tokenIndex))
 
 	if err != nil {
 		t.Fatalf("NewCicNet error = %v", err)
@@ -119,7 +119,7 @@ func TestCicNet_DemurrageToken_BaseBalanceOf(t *testing.T) {
 	if err != nil {
 		t.Errorf("Creating an rpc instance failed = %v", err)
 	}
-	cicnet, err := NewCicNet(*newProvider, w3.A(conf.tokenIndex))
+	cicnet, err := NewCicNet(newProvider, w3.A(conf.tokenIndex))
 
 	for _, testcase := range tests {
 		tt := testcase
@@ -161,7 +161,7 @@ func TestCicNet_DemurrageToken_ChangePeriod(t *testing.T) {
 	if err != nil {
 		t.Errorf("Creating an rpc instance failed = %v", err)
 	}
-	cicnet, err := NewCicNet(*newProvider, w3.A(conf.tokenIndex))
+	cicnet, err := NewCicNet(newProvider, w3.A(conf.tokenIndex))
 
 	nonce, err := cicnet.LastNonce(context.Background(), fromAddress)
 	if err != nil {
@@ -226,7 +226,7 @@ func TestCicNet_DemurrageToken_ApplyDemurrageLimited(t *testing.T) {
 	if err != nil {
 		t.Errorf("Creating an rpc instance failed = %v", err)
 	}
-	cicnet, err := NewCicNet(*newProvider, w3.A(conf.tokenIndex))
+	cicnet, err := NewCicNet(newProvider, w3.A(conf.tokenIndex))
 
 	nonce, err := cicnet.LastNonce(context.Background(), fromAddress)
 	if err != nil {

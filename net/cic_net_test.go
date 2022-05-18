@@ -29,7 +29,7 @@ func TestCicNet_Connect(t *testing.T) {
 		t.Errorf("Creating an rpc instance failed = %v", err)
 	}
 
-	cicnet, _ := NewCicNet(*newProvider, w3.A(conf.tokenIndex))
+	cicnet, _ := NewCicNet(newProvider, w3.A(conf.tokenIndex))
 
 	t.Run(name, func(t *testing.T) {
 		if err := cicnet.provider.EthClient.Close(); (err != nil) != wantErr {

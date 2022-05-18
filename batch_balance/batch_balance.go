@@ -10,9 +10,9 @@ type BatchBalance struct {
 	batchContract common.Address
 }
 
-func NewBatchBalance(rpcProvider provider.Provider, batchContract common.Address) (*BatchBalance, error) {
+func NewBatchBalance(rpcProvider *provider.Provider, batchContract common.Address) (*BatchBalance, error) {
 	return &BatchBalance{
-		provider:      &rpcProvider,
+		provider:      rpcProvider,
 		batchContract: batchContract,
 	}, nil
 }

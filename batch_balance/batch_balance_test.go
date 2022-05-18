@@ -27,7 +27,7 @@ func TestBatchBalance_Connect(t *testing.T) {
 		t.Errorf("Creating an rpc instance failed = %v", err)
 	}
 
-	batchBalance, _ := NewBatchBalance(*newProvider, w3.A(conf.batchContract))
+	batchBalance, _ := NewBatchBalance(newProvider, w3.A(conf.batchContract))
 
 	t.Run(name, func(t *testing.T) {
 		if err := batchBalance.provider.EthClient.Close(); (err != nil) != wantErr {

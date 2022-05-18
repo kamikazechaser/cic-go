@@ -10,9 +10,9 @@ type CicNet struct {
 	tokenIndex common.Address
 }
 
-func NewCicNet(rpcProvider provider.Provider, tokenIndex common.Address) (*CicNet, error) {
+func NewCicNet(rpcProvider *provider.Provider, tokenIndex common.Address) (*CicNet, error) {
 	return &CicNet{
-		provider:   &rpcProvider,
+		provider:   rpcProvider,
 		tokenIndex: tokenIndex,
 	}, nil
 }

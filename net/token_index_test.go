@@ -17,7 +17,7 @@ func TestCicNet_TokenIndex_EntryCount(t *testing.T) {
 	if err != nil {
 		t.Errorf("Creating an rpc instance failed = %v", err)
 	}
-	cicnet, err := NewCicNet(*newProvider, w3.A(conf.tokenIndex))
+	cicnet, err := NewCicNet(newProvider, w3.A(conf.tokenIndex))
 
 	if err != nil {
 		t.Fatalf("NewCicNet error = %v", err)
@@ -69,7 +69,7 @@ func TestCicNet_TokenIndex_AddressAtIndex(t *testing.T) {
 	if err != nil {
 		t.Errorf("Creating an rpc instance failed = %v", err)
 	}
-	cicnet, err := NewCicNet(*newProvider, w3.A(conf.tokenIndex))
+	cicnet, err := NewCicNet(newProvider, w3.A(conf.tokenIndex))
 
 	if err != nil {
 		t.Fatalf("NewCicNet error = %v", err)

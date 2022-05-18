@@ -40,7 +40,7 @@ func TestBatchBalance_TokensBalance(t *testing.T) {
 	if err != nil {
 		t.Errorf("Creating an rpc instance failed = %v", err)
 	}
-	batchBalance, err := NewBatchBalance(*newProvider, w3.A(conf.batchContract))
+	batchBalance, err := NewBatchBalance(newProvider, w3.A(conf.batchContract))
 
 	if err != nil {
 		t.Fatalf("NewBatchBalance error = %v", err)
