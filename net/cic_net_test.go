@@ -4,6 +4,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/grassrootseconomics/cic-go/provider"
 	"github.com/lmittmann/w3"
 )
 
@@ -20,13 +21,18 @@ var conf = &tConfig{
 }
 
 func TestCicNet_Connect(t *testing.T) {
-	name := "Test RPC connection"
+	name := "Test CicNet connect"
 	wantErr := false
 
-	cicnet, _ := NewCicNet(conf.rpcProvider, w3.A(conf.tokenIndex))
+	newProvider, err := provider.NewRpcProvider(conf.rpcProvider)
+	if err != nil {
+		t.Errorf("Creating an rpc instance failed = %v", err)
+	}
+
+	cicnet, _ := NewCicNet(*newProvider, w3.A(conf.tokenIndex))
 
 	t.Run(name, func(t *testing.T) {
-		if err := cicnet.Close(); (err != nil) != wantErr {
+		if err := cicnet.provider.EthClient.Close(); (err != nil) != wantErr {
 			t.Errorf("Error() error = %v, wantErr %v", err, wantErr)
 		}
 	})

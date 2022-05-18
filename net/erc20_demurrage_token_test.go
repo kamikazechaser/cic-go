@@ -3,11 +3,13 @@ package net
 import (
 	"context"
 	"crypto/ecdsa"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/lmittmann/w3"
 	"math/big"
 	"testing"
+
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/grassrootseconomics/cic-go/provider"
+	"github.com/lmittmann/w3"
 )
 
 func TestCicNet_DemurrageToken_DemurrageTokeInfo(t *testing.T) {
@@ -44,7 +46,11 @@ func TestCicNet_DemurrageToken_DemurrageTokeInfo(t *testing.T) {
 		},
 	}
 
-	cicnet, err := NewCicNet(conf.rpcProvider, w3.A(conf.tokenIndex))
+	newProvider, err := provider.NewRpcProvider(conf.rpcProvider)
+	if err != nil {
+		t.Errorf("Creating an rpc instance failed = %v", err)
+	}
+	cicnet, err := NewCicNet(*newProvider, w3.A(conf.tokenIndex))
 
 	if err != nil {
 		t.Fatalf("NewCicNet error = %v", err)
@@ -109,11 +115,11 @@ func TestCicNet_DemurrageToken_BaseBalanceOf(t *testing.T) {
 		},
 	}
 
-	cicnet, err := NewCicNet(conf.rpcProvider, w3.A(conf.tokenIndex))
-
+	newProvider, err := provider.NewRpcProvider(conf.rpcProvider)
 	if err != nil {
-		t.Fatalf("NewCicNet error = %v", err)
+		t.Errorf("Creating an rpc instance failed = %v", err)
 	}
+	cicnet, err := NewCicNet(*newProvider, w3.A(conf.tokenIndex))
 
 	for _, testcase := range tests {
 		tt := testcase
@@ -136,7 +142,7 @@ func TestCicNet_DemurrageToken_BaseBalanceOf(t *testing.T) {
 
 func TestCicNet_DemurrageToken_ChangePeriod(t *testing.T) {
 	type args struct {
-		writeTx WriteTx
+		writeTx provider.WriteTx
 	}
 
 	// Bootstrap signer
@@ -151,10 +157,11 @@ func TestCicNet_DemurrageToken_ChangePeriod(t *testing.T) {
 	}
 	fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
 
-	cicnet, err := NewCicNet(conf.rpcProvider, w3.A(conf.tokenIndex))
+	newProvider, err := provider.NewRpcProvider(conf.rpcProvider)
 	if err != nil {
-		t.Fatalf("NewCicNet error = %v", err)
+		t.Errorf("Creating an rpc instance failed = %v", err)
 	}
+	cicnet, err := NewCicNet(*newProvider, w3.A(conf.tokenIndex))
 
 	nonce, err := cicnet.LastNonce(context.Background(), fromAddress)
 	if err != nil {
@@ -170,12 +177,12 @@ func TestCicNet_DemurrageToken_ChangePeriod(t *testing.T) {
 		{
 			name: "ChangePeriod for Sarafu",
 			args: args{
-				writeTx: WriteTx{
-					from:       fromAddress,
-					to:         w3.A("0xaB89822F31c2092861F713F6F34bd6877a8C1878"),
-					nonce:      nonce + 1,
-					gasLimit:   12000000,
-					privateKey: *privateKey,
+				writeTx: provider.WriteTx{
+					From:       fromAddress,
+					To:         w3.A("0xaB89822F31c2092861F713F6F34bd6877a8C1878"),
+					Nonce:      nonce + 1,
+					GasLimit:   12000000,
+					PrivateKey: *privateKey,
 				},
 			},
 			wantErr: false,
@@ -200,7 +207,7 @@ func TestCicNet_DemurrageToken_ChangePeriod(t *testing.T) {
 func TestCicNet_DemurrageToken_ApplyDemurrageLimited(t *testing.T) {
 	type args struct {
 		rounds  int64
-		writeTx WriteTx
+		writeTx provider.WriteTx
 	}
 
 	// Bootstrap signer
@@ -215,10 +222,11 @@ func TestCicNet_DemurrageToken_ApplyDemurrageLimited(t *testing.T) {
 	}
 	fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
 
-	cicnet, err := NewCicNet(conf.rpcProvider, w3.A(conf.tokenIndex))
+	newProvider, err := provider.NewRpcProvider(conf.rpcProvider)
 	if err != nil {
-		t.Fatalf("NewCicNet error = %v", err)
+		t.Errorf("Creating an rpc instance failed = %v", err)
 	}
+	cicnet, err := NewCicNet(*newProvider, w3.A(conf.tokenIndex))
 
 	nonce, err := cicnet.LastNonce(context.Background(), fromAddress)
 	if err != nil {
@@ -235,12 +243,12 @@ func TestCicNet_DemurrageToken_ApplyDemurrageLimited(t *testing.T) {
 			name: "ChangePeriod for Sarafu",
 			args: args{
 				rounds: 1000,
-				writeTx: WriteTx{
-					from:       fromAddress,
-					to:         w3.A("0xaB89822F31c2092861F713F6F34bd6877a8C1878"),
-					nonce:      nonce + 1,
-					gasLimit:   12000000,
-					privateKey: *privateKey,
+				writeTx: provider.WriteTx{
+					From:       fromAddress,
+					To:         w3.A("0xaB89822F31c2092861F713F6F34bd6877a8C1878"),
+					Nonce:      nonce + 1,
+					GasLimit:   12000000,
+					PrivateKey: *privateKey,
 				},
 			},
 			wantErr: false,

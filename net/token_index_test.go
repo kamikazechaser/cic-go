@@ -2,23 +2,29 @@ package net
 
 import (
 	"context"
-	"github.com/lmittmann/w3"
 	"math/big"
 	"testing"
+
+	"github.com/grassrootseconomics/cic-go/provider"
+	"github.com/lmittmann/w3"
 )
 
 func TestCicNet_TokenIndex_EntryCount(t *testing.T) {
 	name := "Entry count"
 	wantErr := false
 
-	tokenIndex, err := NewCicNet(conf.rpcProvider, w3.A(conf.tokenIndex))
+	newProvider, err := provider.NewRpcProvider(conf.rpcProvider)
+	if err != nil {
+		t.Errorf("Creating an rpc instance failed = %v", err)
+	}
+	cicnet, err := NewCicNet(*newProvider, w3.A(conf.tokenIndex))
 
 	if err != nil {
 		t.Fatalf("NewCicNet error = %v", err)
 	}
 
 	t.Run(name, func(t *testing.T) {
-		got, err := tokenIndex.EntryCount(context.Background())
+		got, err := cicnet.EntryCount(context.Background())
 
 		if (err != nil) != wantErr {
 			t.Errorf("EntryCount() error = %v, wantErr %v", err, wantErr)
@@ -59,7 +65,11 @@ func TestCicNet_TokenIndex_AddressAtIndex(t *testing.T) {
 		},
 	}
 
-	tokenIndex, err := NewCicNet(conf.rpcProvider, w3.A(conf.tokenIndex))
+	newProvider, err := provider.NewRpcProvider(conf.rpcProvider)
+	if err != nil {
+		t.Errorf("Creating an rpc instance failed = %v", err)
+	}
+	cicnet, err := NewCicNet(*newProvider, w3.A(conf.tokenIndex))
 
 	if err != nil {
 		t.Fatalf("NewCicNet error = %v", err)
@@ -69,7 +79,7 @@ func TestCicNet_TokenIndex_AddressAtIndex(t *testing.T) {
 		tt := testcase
 
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tokenIndex.AddressAtIndex(context.Background(), tt.args.index)
+			got, err := cicnet.AddressAtIndex(context.Background(), tt.args.index)
 
 			if (err != nil) != tt.wantErr {
 				t.Errorf("AddressAtIndex() error = %v, wantErr %v", err, tt.wantErr)

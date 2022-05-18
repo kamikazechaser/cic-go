@@ -2,10 +2,12 @@ package net
 
 import (
 	"context"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/lmittmann/w3"
 	"math/big"
 	"testing"
+
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/grassrootseconomics/cic-go/provider"
+	"github.com/lmittmann/w3"
 )
 
 func TestCicNet_ERC20Token_ERC20TokenInfo(t *testing.T) {
@@ -37,7 +39,11 @@ func TestCicNet_ERC20Token_ERC20TokenInfo(t *testing.T) {
 		},
 	}
 
-	cicnet, err := NewCicNet(conf.rpcProvider, w3.A(conf.tokenIndex))
+	newProvider, err := provider.NewRpcProvider(conf.rpcProvider)
+	if err != nil {
+		t.Errorf("Creating an rpc instance failed = %v", err)
+	}
+	cicnet, err := NewCicNet(*newProvider, w3.A(conf.tokenIndex))
 
 	if err != nil {
 		t.Fatalf("NewCicNet error = %v", err)
@@ -92,11 +98,11 @@ func TestCicNet_ERC20Token_BalanceOf(t *testing.T) {
 		},
 	}
 
-	cicnet, err := NewCicNet(conf.rpcProvider, w3.A(conf.tokenIndex))
-
+	newProvider, err := provider.NewRpcProvider(conf.rpcProvider)
 	if err != nil {
-		t.Fatalf("NewCicNet error = %v", err)
+		t.Errorf("Creating an rpc instance failed = %v", err)
 	}
+	cicnet, err := NewCicNet(*newProvider, w3.A(conf.tokenIndex))
 
 	for _, testcase := range tests {
 		tt := testcase

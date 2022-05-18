@@ -12,7 +12,7 @@ import (
 func (c *BatchBalance) TokensBalance(ctx context.Context, owner common.Address, tokens []common.Address) ([]*big.Int, error) {
 	var balancesResults []*big.Int
 
-	err := c.ethClient.CallCtx(
+	err := c.provider.EthClient.CallCtx(
 		ctx,
 		eth.CallFunc(w3.MustNewFunc("tokensBalance(address owner, address[] contracts)", "uint256[]"), c.batchContract, owner, tokens).Returns(&balancesResults),
 	)

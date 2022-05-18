@@ -4,6 +4,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/grassrootseconomics/cic-go/provider"
 	"github.com/lmittmann/w3"
 )
 
@@ -21,10 +22,15 @@ func TestBatchBalance_Connect(t *testing.T) {
 	name := "Test RPC connection"
 	wantErr := false
 
-	cicnet, _ := NewBatchBalance(conf.rpcProvider, w3.A(conf.batchContract))
+	newProvider, err := provider.NewRpcProvider(conf.rpcProvider)
+	if err != nil {
+		t.Errorf("Creating an rpc instance failed = %v", err)
+	}
+
+	batchBalance, _ := NewBatchBalance(*newProvider, w3.A(conf.batchContract))
 
 	t.Run(name, func(t *testing.T) {
-		if err := cicnet.Close(); (err != nil) != wantErr {
+		if err := batchBalance.provider.EthClient.Close(); (err != nil) != wantErr {
 			t.Errorf("Close() error = %v, wantErr %v", err, wantErr)
 		}
 	})

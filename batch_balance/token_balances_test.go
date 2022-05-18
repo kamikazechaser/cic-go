@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/grassrootseconomics/cic-go/provider"
 	"github.com/lmittmann/w3"
 )
 
@@ -35,7 +36,11 @@ func TestBatchBalance_TokensBalance(t *testing.T) {
 		},
 	}
 
-	batchBalance, err := NewBatchBalance(conf.rpcProvider, w3.A(conf.batchContract))
+	newProvider, err := provider.NewRpcProvider(conf.rpcProvider)
+	if err != nil {
+		t.Errorf("Creating an rpc instance failed = %v", err)
+	}
+	batchBalance, err := NewBatchBalance(*newProvider, w3.A(conf.batchContract))
 
 	if err != nil {
 		t.Fatalf("NewBatchBalance error = %v", err)

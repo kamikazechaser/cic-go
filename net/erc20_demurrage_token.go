@@ -2,10 +2,12 @@ package net
 
 import (
 	"context"
+	"math/big"
+
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/grassrootseconomics/cic-go/provider"
 	"github.com/lmittmann/w3"
 	"github.com/lmittmann/w3/module/eth"
-	"math/big"
 )
 
 type DemurrageTokenInfo struct {
@@ -34,7 +36,7 @@ func (c *CicNet) DemurrageTokenInfo(ctx context.Context, tokenAddress common.Add
 		redistributionCount     big.Int
 	)
 
-	err := c.ethClient.CallCtx(
+	err := c.provider.EthClient.CallCtx(
 		ctx,
 		eth.CallFunc(w3.MustNewFunc("demurrageAmount()", "uint128"), tokenAddress).Returns(&demurrageAmount),
 		eth.CallFunc(w3.MustNewFunc("demurrageTimestamp()", "uint256"), tokenAddress).Returns(&demurrageTimestamp),
@@ -67,7 +69,7 @@ func (c *CicNet) DemurrageTokenInfo(ctx context.Context, tokenAddress common.Add
 func (c *CicNet) BaseBalanceOf(ctx context.Context, tokenAddress common.Address, accountAddress common.Address) (big.Int, error) {
 	var balance big.Int
 
-	err := c.ethClient.CallCtx(
+	err := c.provider.EthClient.CallCtx(
 		ctx,
 		eth.CallFunc(w3.MustNewFunc("baseBalanceOf(address _account)", "uint256"), tokenAddress, accountAddress).Returns(&balance),
 	)
@@ -78,7 +80,7 @@ func (c *CicNet) BaseBalanceOf(ctx context.Context, tokenAddress common.Address,
 	return balance, nil
 }
 
-func (c *CicNet) ChangePeriod(ctx context.Context, txData WriteTx) (common.Hash, error) {
+func (c *CicNet) ChangePeriod(ctx context.Context, txData provider.WriteTx) (common.Hash, error) {
 	sig := w3.MustNewFunc("changePeriod()", "bool")
 	input, err := sig.EncodeArgs()
 	if err != nil {
@@ -93,7 +95,7 @@ func (c *CicNet) ChangePeriod(ctx context.Context, txData WriteTx) (common.Hash,
 	return txHash, nil
 }
 
-func (c *CicNet) ApplyDemurrageLimited(ctx context.Context, rounds int64, txData WriteTx) (common.Hash, error) {
+func (c *CicNet) ApplyDemurrageLimited(ctx context.Context, rounds int64, txData provider.WriteTx) (common.Hash, error) {
 	sig := w3.MustNewFunc("applyDemurrageLimited(uint256 _rounds)", "bool")
 	input, err := sig.EncodeArgs(big.NewInt(rounds))
 	if err != nil {

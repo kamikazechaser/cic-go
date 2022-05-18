@@ -2,10 +2,11 @@ package net
 
 import (
 	"context"
+	"math/big"
+
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/lmittmann/w3"
 	"github.com/lmittmann/w3/module/eth"
-	"math/big"
 )
 
 type ERC20Token struct {
@@ -21,7 +22,7 @@ func (c *CicNet) ERC20TokenInfo(ctx context.Context, tokenAddress common.Address
 		tokenDecimals big.Int
 	)
 
-	err := c.ethClient.CallCtx(
+	err := c.provider.EthClient.CallCtx(
 		ctx,
 		eth.CallFunc(w3.MustNewFunc("name()", "string"), tokenAddress).Returns(&tokenName),
 		eth.CallFunc(w3.MustNewFunc("symbol()", "string"), tokenAddress).Returns(&tokenSymbol),
@@ -40,7 +41,7 @@ func (c *CicNet) ERC20TokenInfo(ctx context.Context, tokenAddress common.Address
 func (c *CicNet) BalanceOf(ctx context.Context, tokenAddress common.Address, accountAddress common.Address) (big.Int, error) {
 	var balance big.Int
 
-	err := c.ethClient.CallCtx(
+	err := c.provider.EthClient.CallCtx(
 		ctx,
 		eth.CallFunc(w3.MustNewFunc("balanceOf(address _account)", "uint256"), tokenAddress, accountAddress).Returns(&balance),
 	)
