@@ -2,16 +2,17 @@ package net
 
 import (
 	"context"
+	"math/big"
+
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/lmittmann/w3"
 	"github.com/lmittmann/w3/module/eth"
-	"math/big"
 )
 
 func (c *CicNet) EntryCount(ctx context.Context) (big.Int, error) {
 	var tokenCount big.Int
 
-	err := c.ethClient.CallCtx(
+	err := c.provider.EthClient.CallCtx(
 		ctx,
 		eth.CallFunc(w3.MustNewFunc("entryCount()", "uint256"), c.tokenIndex).Returns(&tokenCount),
 	)
@@ -25,7 +26,7 @@ func (c *CicNet) EntryCount(ctx context.Context) (big.Int, error) {
 func (c *CicNet) AddressAtIndex(ctx context.Context, index *big.Int) (string, error) {
 	var address common.Address
 
-	err := c.ethClient.CallCtx(
+	err := c.provider.EthClient.CallCtx(
 		ctx,
 		eth.CallFunc(w3.MustNewFunc("entry(uint256 _idx)", "address"), c.tokenIndex, index).Returns(&address),
 	)

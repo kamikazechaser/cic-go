@@ -2,16 +2,18 @@ package net
 
 import (
 	"context"
+	"math/big"
+
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/grassrootseconomics/cic-go/provider"
 	"github.com/lmittmann/w3/module/eth"
-	"math/big"
 )
 
 func (c *CicNet) LastNonce(ctx context.Context, address common.Address) (uint64, error) {
 	var nonce uint64
 
-	err := c.ethClient.CallCtx(
+	err := c.provider.EthClient.CallCtx(
 		ctx,
 		eth.Nonce(address, nil).Returns(&nonce),
 	)
@@ -22,18 +24,18 @@ func (c *CicNet) LastNonce(ctx context.Context, address common.Address) (uint64,
 	return nonce, nil
 }
 
-func (c *CicNet) signAndCall(ctx context.Context, input []byte, txData WriteTx) (common.Hash, error) {
+func (c *CicNet) signAndCall(ctx context.Context, input []byte, txData provider.WriteTx) (common.Hash, error) {
 	var txHash common.Hash
 
-	tx, err := types.SignNewTx(&txData.privateKey, c.kitabuSigner, &types.LegacyTx{
-		To:       &txData.to,
-		Nonce:    txData.nonce,
+	tx, err := types.SignNewTx(&txData.PrivateKey, c.provider.Signer, &types.LegacyTx{
+		To:       &txData.To,
+		Nonce:    txData.Nonce,
 		Data:     input,
-		Gas:      txData.gasLimit,
+		Gas:      txData.GasLimit,
 		GasPrice: big.NewInt(1),
 	})
 
-	err = c.ethClient.CallCtx(
+	err = c.provider.EthClient.CallCtx(
 		ctx,
 		eth.SendTransaction(tx).Returns(&txHash),
 	)
