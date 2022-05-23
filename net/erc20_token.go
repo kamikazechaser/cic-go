@@ -10,9 +10,10 @@ import (
 )
 
 type ERC20Token struct {
-	Name     string
-	Symbol   string
-	Decimals big.Int
+	Name        string
+	Symbol      string
+	Decimals    big.Int
+	TotalSupply big.Int
 }
 
 func (c *CicNet) ERC20TokenInfo(ctx context.Context, tokenAddress common.Address) (ERC20Token, error) {
@@ -20,6 +21,7 @@ func (c *CicNet) ERC20TokenInfo(ctx context.Context, tokenAddress common.Address
 		tokenName     string
 		tokenSymbol   string
 		tokenDecimals big.Int
+		totalSupply   big.Int
 	)
 
 	err := c.provider.EthClient.CallCtx(
@@ -27,15 +29,17 @@ func (c *CicNet) ERC20TokenInfo(ctx context.Context, tokenAddress common.Address
 		eth.CallFunc(w3.MustNewFunc("name()", "string"), tokenAddress).Returns(&tokenName),
 		eth.CallFunc(w3.MustNewFunc("symbol()", "string"), tokenAddress).Returns(&tokenSymbol),
 		eth.CallFunc(w3.MustNewFunc("decimals()", "uint256"), tokenAddress).Returns(&tokenDecimals),
+		eth.CallFunc(w3.MustNewFunc("totalSupply()", "uint256"), tokenAddress).Returns(&totalSupply),
 	)
 	if err != nil {
 		return ERC20Token{}, err
 	}
 
 	return ERC20Token{
-		Name:     tokenName,
-		Symbol:   tokenSymbol,
-		Decimals: tokenDecimals,
+		Name:        tokenName,
+		Symbol:      tokenSymbol,
+		Decimals:    tokenDecimals,
+		TotalSupply: totalSupply,
 	}, nil
 }
 func (c *CicNet) BalanceOf(ctx context.Context, tokenAddress common.Address, accountAddress common.Address) (big.Int, error) {
